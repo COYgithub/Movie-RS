@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.express as px
 from recommender_core import MovieLensRecommender
 
 # === 新增这两行，解决图表中文显示方块的问题 ===
@@ -91,17 +92,37 @@ if selected_user:
         # 显示精美列表
         for i, row in df_plot.iterrows():
             st.markdown(f"**{i + 1}. {row['Movie']}** (综合得分: `{row['Score']:.2f}`)")
-
-    with res_col2:
-        # 使用 seaborn 绘制得分水平柱状图
-        fig, ax = plt.subplots(figsize=(8, 4))
-        sns.barplot(x='Score', y='Movie', data=df_plot, palette='viridis', ax=ax)
-        ax.set_xlabel("预测综合得分 (Predicted Score)")
-        ax.set_ylabel("")
-        st.pyplot(fig)
+        
     # with res_col2:
     #     st.markdown("##### 📊 预测得分对比")
     #     # 将 DataFrame 的索引设为电影名，这样图表的 X 轴就是电影名
     #     chart_data = df_plot.set_index('Movie')
     #     # 使用 Streamlit 自带的交互式柱状图，彻底解决云端中文乱码问题
     #     st.bar_chart(chart_data)
+    with res_col2:
+        # 使用 Plotly 绘制高颜值、带渐变色的交互式水平柱状图
+        fig = px.bar(
+            df_plot, 
+            x='Score', 
+            y='Movie', 
+            orientation='h', # 水平显示
+            color='Score',   # 根据得分映射颜色
+            color_continuous_scale='viridis', # 恢复你喜欢的旧版高级渐变色
+            text='Score'     # 在柱子上显示具体数值
+        )
+        
+        # 优化图表排版细节
+        fig.update_layout(
+            title="<b>📊 预测得分对比</b>",
+            xaxis_title="预测综合得分",
+            yaxis_title="",
+            yaxis={'categoryorder':'total ascending'}, # 让高分排在最上面
+            plot_bgcolor='rgba(0,0,0,0)', # 背景透明，更贴合网页主题
+            height=400
+        )
+        
+        # 调整柱子上的文字显示格式
+        fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
+        
+        # 将 Plotly 图表渲染到 Streamlit 页面上
+        st.plotly_chart(fig, use_container_width=True)
