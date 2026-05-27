@@ -5,8 +5,8 @@ import seaborn as sns
 from recommender_core import MovieLensRecommender
 
 # === 新增这两行，解决图表中文显示方块的问题 ===
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签（Windows系统可用黑体）
-plt.rcParams['axes.unicode_minus'] = False    # 用来正常显示负号
+# plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签（Windows系统可用黑体）
+# plt.rcParams['axes.unicode_minus'] = False    # 用来正常显示负号
 # ============================================
 
 # ================= 页面配置 =================
@@ -92,10 +92,16 @@ if selected_user:
         for i, row in df_plot.iterrows():
             st.markdown(f"**{i + 1}. {row['Movie']}** (综合得分: `{row['Score']:.2f}`)")
 
+    # with res_col2:
+    #     # 使用 seaborn 绘制得分水平柱状图
+    #     fig, ax = plt.subplots(figsize=(8, 4))
+    #     sns.barplot(x='Score', y='Movie', data=df_plot, palette='viridis', ax=ax)
+    #     ax.set_xlabel("预测综合得分 (Predicted Score)")
+    #     ax.set_ylabel("")
+    #     st.pyplot(fig)
     with res_col2:
-        # 使用 seaborn 绘制得分水平柱状图
-        fig, ax = plt.subplots(figsize=(8, 4))
-        sns.barplot(x='Score', y='Movie', data=df_plot, palette='viridis', ax=ax)
-        ax.set_xlabel("预测综合得分 (Predicted Score)")
-        ax.set_ylabel("")
-        st.pyplot(fig)
+        st.markdown("##### 📊 预测得分对比")
+        # 将 DataFrame 的索引设为电影名，这样图表的 X 轴就是电影名
+        chart_data = df_plot.set_index('Movie')
+        # 使用 Streamlit 自带的交互式柱状图，彻底解决云端中文乱码问题
+        st.bar_chart(chart_data)
