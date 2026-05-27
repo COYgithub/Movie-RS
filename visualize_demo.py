@@ -11,7 +11,7 @@ plt.rcParams['axes.unicode_minus'] = False    # 用来正常显示负号
 
 # ================= 页面配置 =================
 st.set_page_config(page_title="工业级推荐系统可视化演示", layout="wide")
-st.title("🎬 电影推荐系统：漏斗模型可视化看板")
+st.title("🎬 电影推荐系统")
 
 
 # ================= 核心模型加载 (使用缓存避免重复训练) =================
